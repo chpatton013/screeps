@@ -1,0 +1,16 @@
+{
+  "name": "screeps",
+  "version": "0.0.1",
+  "description": "Scripts for screeps",
+  "author": "Christopher Patton <chpatton013@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chpatton013/screeps.git"
+  },
+  "dependencies": {
+    "grunt": "1.0.1",
+    "grunt-screeps": "1.2.1",
+    "jslint": "0.10.1"
+  },
+  "license": "MIT"
+}
