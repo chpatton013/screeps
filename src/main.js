@@ -1,70 +1,78 @@
 'use strict';
 
-var ROLE_BUILDER = 'builder';
-var ROLE_HARVESTER = 'harvester';
-var ROLE_UPGRADER = 'upgrader';
-
 module.exports.loop = function () {
-   var role_names = [ROLE_BUILDER, ROLE_HARVESTER, ROLE_UPGRADER];
-   var role_automation = {};
-   role_automation[ROLE_BUILDER] = {
-      quota: 2,
-      components: _.flatten([
-         new Array(1).fill(WORK),
-         new Array(2).fill(CARRY),
-         new Array(2).fill(MOVE),
-      ], /* shallow */ true),
-   };
-   role_automation[ROLE_HARVESTER] = {
-      quota: 4,
-      components: _.flatten([
-         new Array(1).fill(WORK),
-         new Array(2).fill(CARRY),
-         new Array(2).fill(MOVE),
-      ], /* shallow */ true),
-   };
-   role_automation[ROLE_UPGRADER] = {
-      quota: 2,
-      components: _.flatten([
-         new Array(1).fill(WORK),
-         new Array(2).fill(CARRY),
-         new Array(2).fill(MOVE),
-      ], /* shallow */ true),
-   };
+   var ROLE_BUILDER = 'builder';
+   var ROLE_HARVESTER = 'harvester';
+   var ROLE_UPGRADER = 'upgrader';
+
+   var role_definitions = [
+      {
+         name: ROLE_BUILDER,
+         quota: 2,
+         body_components: {
+            WORK: 1,
+            CARRY: 2,
+            MOVE: 2,
+         },
+      },
+      {
+         name: ROLE_HARVESTER,
+         quota: 4,
+         body_components: {
+            WORK: 1,
+            CARRY: 2,
+            MOVE: 2,
+         },
+      },
+      {
+         name: ROLE_UPGRADER,
+         quota: 4,
+         body_components: {
+            WORK: 1,
+            CARRY: 2,
+            MOVE: 2,
+         },
+      },
+   ];
 
    var roles = {};
-   for (var index = 0; index < role_names.length; ++index) {
-      var name = role_names[index];
-      roles[name] = {
-         name: name,
-         behavior: require('role.' + name),
-         quota: role_automation[name].quota,
-         components: role_automation[name].components,
-      };
+   for (var index in role_definitions) {
+      var role_definition = role_definitions[index];
+      var name = role_definition.name;
+      var quota = role_definition.quota;
+      var body_components = role_definition.body_components;
+      roles[name] = require('role.' + name)(name, quota, body_components);
    }
 
+   // Cleanup memory from dead creeps.
    for (var name in Memory.creeps) {
       if (!Game.creeps[name]) {
          delete Memory.creeps[name];
       }
    }
 
-   for (var name in roles) {
-      var role = roles[name];
-      var creeps = _.filter(
-         Game.creeps,
-         (creep) => creep.memory.role == name);
-      var quota = role.quota;
-      if (creeps.length < quota) {
-         Game.spawns.Spawn1.createCreep(
-               role.components,
-               undefined,
-               {role: name});
+   // Create new creeps if we can and need to.
+   var spawn = Game.spawns.Spawn1;
+   if (!spawn.spawning) {
+      for (var name in roles) {
+         var role = roles[name];
+         var creeps = _.filter(
+            Game.creeps,
+            function(creep) { return creep.memory.role == name; });
+         var quota = role.quota;
+         if (creeps.length < quota) {
+            var body = role.get_body_definition();
+            if (spawn.canCreateCreep(body) == OK) {
+               spawn.createCreep(body, undefined, {role: name});
+               break;
+            }
+         }
       }
    }
 
+   // Tell all the creeps what to do.
    for (var name in Game.creeps) {
       var creep = Game.creeps[name];
-      roles[creep.memory.role].behavior.run(creep);
+      roles[creep.memory.role].run(creep);
    }
 }
