@@ -17,9 +17,12 @@ module.exports = function(name, required_body_components) {
             // TODO: Prioritize targets by distance to creep.
             var withdraw = withdraw_targets[0];
             var creep_energy_deficit = creep.carryCapacity - creep.carry.energy;
-            var transfer_amount = Math.min(
-                  Math.max(withdraw.target.energy, creep_energy_deficit),
-                  withdraw.surplus);
+            var transfer_amount =
+               Math.min(creep_energy_deficit, withdraw.surplus);
+
+            if (transfer_amount == 0) {
+               return false;
+            }
 
             var withdraw_result =
                withdraw.target.transferEnergy(creep, transfer_amount);
