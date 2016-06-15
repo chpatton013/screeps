@@ -23,16 +23,6 @@ module.exports = function(name, quota, body_components) {
             return;
          }
 
-         if (creep.memory.repairing && creep.carry.energy == 0) {
-            creep.memory.repairing = false;
-         } else if (!creep.memory.repairing && creep.carry.energy > 0) {
-            creep.memory.repairing = true;
-         }
-         if (creep.memory.repairing &&
-               Action.actions[Action.constants.REPAIR].run(creep)) {
-            return;
-         }
-
          if (creep.memory.building && creep.carry.energy == 0) {
             creep.memory.building = false;
          } else if (!creep.memory.building && creep.carry.energy > 0) {
@@ -40,6 +30,16 @@ module.exports = function(name, quota, body_components) {
          }
          if (creep.memory.building &&
                Action.actions[Action.constants.BUILD].run(creep)) {
+            return;
+         }
+
+         if (creep.memory.repairing && creep.carry.energy == 0) {
+            creep.memory.repairing = false;
+         } else if (!creep.memory.repairing && creep.carry.energy > 0) {
+            creep.memory.repairing = true;
+         }
+         if (creep.memory.repairing &&
+               Action.actions[Action.constants.REPAIR].run(creep)) {
             return;
          }
 
