@@ -17,7 +17,7 @@ module.exports = function() {
       },
       {
          name: ROLE_HARVESTER,
-         quota: 4,
+         quota: 6,
          body_components: {
             WORK: 1,
             CARRY: 2,
