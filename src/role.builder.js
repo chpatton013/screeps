@@ -13,7 +13,7 @@ module.exports = function(name, quota, body_components) {
 
          var RENEW_THRESHOLD = 200;
 
-         if (creep.memory.renewing && creep.ticks == creep.ticksMax) {
+         if (creep.memory.renewing && creep.ticks == creep.ticksToLive) {
             creep.memory.renewing = false;
          } else if (!creep.memory.renewing && creep.ticks < RENEW_THRESHOLD) {
             creep.memory.renewing = true;
