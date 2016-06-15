@@ -1,6 +1,17 @@
 'use strict';
 
 module.exports.loop = function () {
+   var body_component_name_to_value = {
+      MOVE: MOVE,
+      WORK: WORK,
+      CARRY: CARRY,
+      ATTACK: ATTACK,
+      RANGED_ATTACK: RANGED_ATTACK,
+      HEAL: HEAL,
+      CLAIM, CLAIM,
+      TOUGH: TOUGH,
+   };
+
    var ROLE_BUILDER = 'builder';
    var ROLE_HARVESTER = 'harvester';
    var ROLE_UPGRADER = 'upgrader';
@@ -61,7 +72,12 @@ module.exports.loop = function () {
             function(creep) { return creep.memory.role == name; });
          var quota = role.quota;
          if (creeps.length < quota) {
-            var body = role.get_body_definition();
+            var body = [];
+            for (var component_name in body_components) {
+               var amount = role.body_components[component_name];
+               var component = body_component_name_to_value[component_name];
+               body = body.concat(new Array(amount).fill(component));
+            }
             if (spawn.canCreateCreep(body) == OK) {
                spawn.createCreep(body, undefined, {role: name});
                break;
