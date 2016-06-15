@@ -31,8 +31,8 @@ module.exports = function(name, required_body_components) {
             var target = deposit_targets[0];
             if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                creep.moveTo(target);
-               return true;
             }
+            return true;
          }
          return false;
       },

@@ -6,9 +6,8 @@ module.exports = function(name, required_body_components) {
          if (creep.upgradeController(creep.room.controller) ==
                ERR_NOT_IN_RANGE) {
             creep.moveTo(creep.room.controller);
-            return true;
          }
-         return false;
+         return true;
       },
    };
 };

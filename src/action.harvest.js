@@ -14,9 +14,8 @@ module.exports = function(name, required_body_components) {
          // TODO: Prioritize sources by distance to creep.
          if (creep.harvest(sources[0]) == ERR_NOT_IN_RANGE) {
             creep.moveTo(sources[0]);
-            return true;
          }
-         return false;
+         return true;
       },
    };
 };

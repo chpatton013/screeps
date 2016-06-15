@@ -15,8 +15,8 @@ module.exports = function(name, required_body_components) {
             var target = renew_targets[0];
             if (target.renewCreep(creep) == ERR_NOT_IN_RANGE) {
                creep.moveTo(target);
-               return true;
             }
+            return true;
          }
          return false;
       },

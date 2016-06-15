@@ -24,8 +24,8 @@ module.exports = function(name, required_body_components) {
             if (withdraw.target.transferEnergy(creep, transfer_amount) ==
                   ERR_NOT_IN_RANGE) {
                creep.moveTo(withdraw.target);
-               return true;
             }
+            return true;
          }
          return false;
       },
