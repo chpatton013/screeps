@@ -1,5 +1,7 @@
 'use strict';
 
+var Action = require('action');
+
 module.exports = function(name, quota, body_components) {
    return {
       name: name,
@@ -15,47 +17,9 @@ module.exports = function(name, quota, body_components) {
          }
 
          if (creep.memory.upgrading) {
-            if (creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
-               creep.moveTo(creep.room.controller);
-            }
+            Action.actions[Action.constants.UPGRADE].run(creep);
          } else {
-            var storage_structure_types = [
-               STRUCTURE_EXTENSION,
-               STRUCTURE_SPAWN,
-            ];
-            var storage_targets = creep.room.find(FIND_STRUCTURES, {
-               filter: function(structure) {
-                  return structure.energy > 0 &&
-                        _.contains(
-                              storage_structure_types,
-                              structure.structureType);
-               }
-            });
-            var energy_levels = _.map(
-                  storage_targets,
-                  function(target) { return target.energy; });
-            var energy_reserve = _.reduce(
-                  energy_levels,
-                  function(accumulator, value) { return accumulator + value; },
-                  0);
-
-            var HARVESTER_BODY_COST = 300;
-            if (energy_reserve > HARVESTER_BODY_COST) {
-               // TODO: Prioritize storage_targets by distance to creep.
-               var target = storage_targets[0];
-
-               var transfer_amount = Math.max(
-                     target.energy,
-                     creep.carryCapacity - creep.carry.energy);
-               transfer_amount = Math.min(
-                     transfer_amount,
-                     energy_reserve - HARVESTER_BODY_COST)
-               if (target.transferEnergy(creep, transfer_amount) == ERR_NOT_IN_RANGE) {
-                  creep.moveTo(target);
-               }
-            } else {
-               creep.moveTo(Game.flags.Idle);
-            }
+            Action.actions[Action.constants.WITHDRAW].run(creep);
          }
       }
    };

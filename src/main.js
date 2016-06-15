@@ -1,5 +1,7 @@
 'use strict';
 
+var Role = require('role');
+
 module.exports.loop = function () {
    var body_component_name_to_value = {
       MOVE: MOVE,
@@ -8,52 +10,9 @@ module.exports.loop = function () {
       ATTACK: ATTACK,
       RANGED_ATTACK: RANGED_ATTACK,
       HEAL: HEAL,
-      CLAIM, CLAIM,
+      CLAIM: CLAIM,
       TOUGH: TOUGH,
    };
-
-   var ROLE_BUILDER = 'builder';
-   var ROLE_HARVESTER = 'harvester';
-   var ROLE_UPGRADER = 'upgrader';
-
-   var role_definitions = [
-      {
-         name: ROLE_BUILDER,
-         quota: 2,
-         body_components: {
-            WORK: 1,
-            CARRY: 2,
-            MOVE: 2,
-         },
-      },
-      {
-         name: ROLE_HARVESTER,
-         quota: 4,
-         body_components: {
-            WORK: 1,
-            CARRY: 2,
-            MOVE: 2,
-         },
-      },
-      {
-         name: ROLE_UPGRADER,
-         quota: 4,
-         body_components: {
-            WORK: 1,
-            CARRY: 2,
-            MOVE: 2,
-         },
-      },
-   ];
-
-   var roles = {};
-   for (var index in role_definitions) {
-      var role_definition = role_definitions[index];
-      var name = role_definition.name;
-      var quota = role_definition.quota;
-      var body_components = role_definition.body_components;
-      roles[name] = require('role.' + name)(name, quota, body_components);
-   }
 
    // Cleanup memory from dead creeps.
    for (var name in Memory.creeps) {
@@ -65,8 +24,8 @@ module.exports.loop = function () {
    // Create new creeps if we can and need to.
    var spawn = Game.spawns.Spawn1;
    if (!spawn.spawning) {
-      for (var name in roles) {
-         var role = roles[name];
+      for (var name in Role.roles) {
+         var role = Role.roles[name];
          var creeps = _.filter(
             Game.creeps,
             function(creep) { return creep.memory.role == name; });
@@ -89,6 +48,11 @@ module.exports.loop = function () {
    // Tell all the creeps what to do.
    for (var name in Game.creeps) {
       var creep = Game.creeps[name];
-      roles[creep.memory.role].run(creep);
+      var role = Role.roles[creep.memory.role];
+      if (role) {
+         role.run(creep);
+      } else {
+         console.log('Creep ' + creep.name + ' has invalid role ' + creep.memory.role);
+      }
    }
 }

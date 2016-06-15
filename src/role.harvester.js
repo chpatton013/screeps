@@ -1,5 +1,7 @@
 'use strict';
 
+var Action = require('action');
+
 module.exports = function(name, quota, body_components) {
    return {
       name: name,
@@ -15,32 +17,9 @@ module.exports = function(name, quota, body_components) {
          }
 
          if (creep.memory.harvesting) {
-            var deposit_structure_types = [
-               STRUCTURE_EXTENSION,
-               STRUCTURE_SPAWN,
-               STRUCTURE_TOWER,
-            ];
-            var deposit_targets = creep.room.find(FIND_STRUCTURES, {
-               filter: function(structure) {
-                  return structure.energy < structure.energyCapacity &&
-                        _.contains(
-                              deposit_structure_types,
-                              structure.structureType);
-               }
-            });
-            if (deposit_targets.length > 0) {
-               if (creep.transfer(deposit_targets[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                  creep.moveTo(deposit_targets[0]);
-               }
-            } else {
-               creep.moveTo(Game.flags.Idle);
-            }
+            Action.actions[Action.constants.DEPOSIT].run(creep);
          } else {
-            var sources = creep.room.find(FIND_SOURCES);
-            // TODO: Prioritize sources by distance to creep.
-            if (creep.harvest(sources[0]) == ERR_NOT_IN_RANGE) {
-               creep.moveTo(sources[0]);
-            }
+            Action.actions[Action.constants.HARVEST].run(creep);
          }
       }
    };
