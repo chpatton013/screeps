@@ -29,8 +29,12 @@ module.exports = function(name, required_body_components) {
          if (deposit_targets.length > 0) {
             // TODO: Prioritize targets by contention.
             var target = deposit_targets[0];
-            if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+            var deposit_result = creep.transfer(target, RESOURCE_ENERGY);
+            if (deposit_result == ERR_NOT_IN_RANGE) {
                creep.moveTo(target);
+            } else if (deposit_result != OK) {
+               console.log('Failed to deposit:', deposit_result);
+               return false;
             }
             return true;
          }

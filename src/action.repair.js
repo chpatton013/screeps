@@ -51,6 +51,9 @@ module.exports = function(name, required_body_components) {
                Memory.repairs[target.id] = target.hits;
             } else if (repair_result == ERR_NOT_IN_RANGE) {
                creep.moveTo(target);
+            } else {
+               console.log('Failed to repair:', repair_result);
+               return false;
             }
             return true;
          }

@@ -12,8 +12,12 @@ module.exports = function(name, required_body_components) {
       run: function(creep) {
          var sources = get_sources(creep.room);
          // TODO: Prioritize sources by distance to creep.
-         if (creep.harvest(sources[0]) == ERR_NOT_IN_RANGE) {
+         var harvest_result = creep.harvest(sources[0]);
+         if (harvest_result == ERR_NOT_IN_RANGE) {
             creep.moveTo(sources[0]);
+         } else if (harvest_result != OK) {
+            console.log('Failed to harvest:', harvest_result);
+            return false;
          }
          return true;
       },

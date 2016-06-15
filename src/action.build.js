@@ -14,8 +14,12 @@ module.exports = function(name, required_body_components) {
          if (build_targets.length) {
             // TODO: Prioritize targets by distance to creep.
             var target = build_targets[0];
-            if (creep.build(target) == ERR_NOT_IN_RANGE) {
+            var build_result = creep.build(target);
+            if (build_result == ERR_NOT_IN_RANGE) {
                creep.moveTo(target);
+            } else if (build_result != OK) {
+               console.log('Failed to build:', build_result);
+               return false;
             }
             return true;
          }

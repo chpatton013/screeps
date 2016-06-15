@@ -14,8 +14,12 @@ module.exports = function(name, required_body_components) {
          if (renew_targets.length > 0) {
             // TODO: Prioritize targets by contention and distance to creep.
             var target = renew_targets[0];
-            if (target.renewCreep(creep) == ERR_NOT_IN_RANGE) {
+            var renew_result = target.renewCreep(creep);
+            if (renew_result == ERR_NOT_IN_RANGE) {
                creep.moveTo(target);
+            } else if (renew_result != OK) {
+               console.log('Failed to renew:', renew_result);
+               return false;
             }
             return true;
          }

@@ -21,9 +21,13 @@ module.exports = function(name, required_body_components) {
                   Math.max(withdraw.target.energy, creep_energy_deficit),
                   withdraw.surplus);
 
-            if (withdraw.target.transferEnergy(creep, transfer_amount) ==
-                  ERR_NOT_IN_RANGE) {
+            var withdraw_result =
+               withdraw.target.transferEnergy(creep, transfer_amount);
+            if (withdraw_result == ERR_NOT_IN_RANGE) {
                creep.moveTo(withdraw.target);
+            } else if (withdraw_result != OK) {
+               console.log('Failed to withdraw:', withdraw_result);
+               return false;
             }
             return true;
          }

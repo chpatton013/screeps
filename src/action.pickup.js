@@ -14,8 +14,12 @@ module.exports = function(name, required_body_components) {
          if (pickup_targets.length) {
             // TODO: Prioritize targets by distance to creep.
             var target = pickup_targets[0];
-            if (creep.pickup(target) == ERR_NOT_IN_RANGE) {
+            var pickup_result = creep.pickup(target);
+            if (pickup_result == ERR_NOT_IN_RANGE) {
                creep.moveTo(target);
+            } else if (pickup_result != OK) {
+               console.log('Failed to pickup:', pickup_result);
+               return false;
             }
             return true;
          }
