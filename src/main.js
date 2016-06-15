@@ -32,7 +32,7 @@ module.exports.loop = function () {
          var quota = role.quota;
          if (creeps.length < quota) {
             var body = [];
-            for (var component_name in body_components) {
+            for (var component_name in role.body_components) {
                var amount = role.body_components[component_name];
                var component = body_component_name_to_value[component_name];
                body = body.concat(new Array(amount).fill(component));
