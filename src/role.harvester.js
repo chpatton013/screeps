@@ -8,19 +8,44 @@ module.exports = function(name, quota, body_components) {
       quota: quota,
       body_components: body_components,
       run: function(creep) {
-         // memory: Harvesting defined as the return trip to the deposit structure.
-         if (creep.memory.harvesting && creep.carry.energy == 0) {
-            creep.memory.harvesting = false;
+         // Harvester state transitions:
+         // ENTER -> Renew -> Harvest -> Deposit -> Idle
+
+         var RENEW_THRESHOLD = 200;
+
+         if (creep.memory.renewing && creep.ticks == creep.ticksMax) {
+            creep.memory.renewing = false;
+         } else if (!creep.memory.renewing && creep.ticks < RENEW_THRESHOLD) {
+            creep.memory.renewing = true;
          }
-         if (!creep.memory.harvesting && creep.carry.energy == creep.carryCapacity) {
-            creep.memory.harvesting = true;
+         if (creep.memory.renewing &&
+               Action.actions[Action.constants.RENEW].run(creep)) {
+            return;
          }
 
-         if (creep.memory.harvesting) {
-            Action.actions[Action.constants.DEPOSIT].run(creep);
-         } else {
-            Action.actions[Action.constants.HARVEST].run(creep);
+         if (creep.memory.harvesting &&
+               creep.carry.energy == creep.carryCapacity) {
+            creep.memory.harvesting = false;
+         } else if (!creep.memory.harvesting && creep.carry.energy == 0) {
+            creep.memory.harvesting = true;
          }
+         if (creep.memory.harvesting &&
+               Action.actions[Action.constants.HARVEST].run(creep)) {
+            return;
+         }
+
+         if (creep.memory.depositing && creep.carry.energy == 0) {
+            creep.memory.depositing = false;
+         } else if (!creep.memory.depositing &&
+               creep.carry.energy == creep.carryCapacity) {
+            creep.memory.depositing = true;
+         }
+         if (creep.memory.depositing &&
+               Action.actions[Action.constants.DEPOSIT].run(creep)) {
+            return;
+         }
+
+         Action.actions[Action.constants.IDLE].run(creep);
       }
    };
 };
