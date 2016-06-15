@@ -1,10 +1,15 @@
 'use strict';
 
 module.exports = function(name, required_body_components) {
+   var ignore_structure_types = [
+      STRUCTURE_WALL,
+   ];
+
    function get_repair_targets(room) {
       return room.find(FIND_STRUCTURES, {
          filter: function(structure) {
-            return structure.hits < structure.hitsMax;
+            return structure.hits < structure.hitsMax &&
+               !_.contains(ignore_structure_types, structure.structureType);
          },
       });
    }
