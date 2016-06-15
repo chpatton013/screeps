@@ -1,15 +1,38 @@
 'use strict';
 
 module.exports = function(name, required_body_components) {
+   if (!Memory.repairs) {
+      Memory.repairs = {};
+   }
+
    var ignore_structure_types = [
       STRUCTURE_WALL,
    ];
 
+   var REPAIR_HITS_RATIO_HYSTERESIS_LOW = 0.25;
+   var REPAIR_HITS_RATIO_HYSTERESIS_HIGH = 0.75;
+
    function get_repair_targets(room) {
       return room.find(FIND_STRUCTURES, {
          filter: function(structure) {
-            return structure.hits < structure.hitsMax &&
-               !_.contains(ignore_structure_types, structure.structureType);
+            if (_.contains(ignore_structure_types, structure.structureType)) {
+               return false;
+            }
+
+            var hysteresis_low_value =
+               structure.hitsMax * REPAIR_HITS_RATIO_HYSTERESIS_LOW;
+            if (structure.hits < hysteresis_low_value) {
+               return true;
+            }
+
+            var hysteresis_high_value =
+               structure.hitsMax * REPAIR_HITS_RATIO_HYSTERESIS_HIGH;
+            if (structure.hits > hysteresis_high_value) {
+               return false;
+            }
+
+            var repair_start = Memory.repairs[structure.id];
+            return repair_start && (repair_start < structure.hits);
          },
       });
    }
@@ -23,7 +46,10 @@ module.exports = function(name, required_body_components) {
          if (repair_targets.length) {
             // TODO: Prioritize targets by distance to creep.
             var target = repair_targets[0];
-            if (creep.repair(target) == ERR_NOT_IN_RANGE) {
+            var repair_result = creep.repair(target);
+            if (repair_result == OK) {
+               Memory.repairs[target.id] = target.hits;
+            } else if (repair_result == ERR_NOT_IN_RANGE) {
                creep.moveTo(target);
             }
             return true;
