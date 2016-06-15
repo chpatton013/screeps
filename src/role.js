@@ -10,7 +10,7 @@ module.exports = function() {
          name: ROLE_BUILDER,
          quota: 2,
          body_components: {
-            WORK: 1,
+            WORK: 2,
             CARRY: 2,
             MOVE: 2,
          },
@@ -19,7 +19,7 @@ module.exports = function() {
          name: ROLE_HARVESTER,
          quota: 6,
          body_components: {
-            WORK: 1,
+            WORK: 2,
             CARRY: 2,
             MOVE: 2,
          },
@@ -28,7 +28,7 @@ module.exports = function() {
          name: ROLE_UPGRADER,
          quota: 4,
          body_components: {
-            WORK: 1,
+            WORK: 2,
             CARRY: 2,
             MOVE: 2,
          },

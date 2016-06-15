@@ -30,7 +30,7 @@ function get_spawns_with_surplus_energy(room) {
          function(accumulator, value) { return accumulator + value; },
          0);
 
-   var WORKER_BODY_COST = 300;
+   var WORKER_BODY_COST = 400;
 
    var targets = [];
    for (var index in spawns) {
