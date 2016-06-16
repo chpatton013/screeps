@@ -1,5 +1,7 @@
 'use strict';
 
+var WORKER_BODY_COST = 400;
+
 function sort_by_distance(targets, position, get_target) {
    if (!get_target) {
       get_target = function(x) { return x; };
@@ -42,12 +44,9 @@ function get_spawns_with_surplus_energy(room) {
    var spawns = get_spawns_with_energy(room);
    var extensions = get_extensions_with_energy(room);
 
-   var extension_energy = _.map(
-         extensions,
-         function(extension) { return extension.energy; });
-   var total_extension_energy = _.sum(extension_energy);
-
-   var WORKER_BODY_COST = 400;
+   var total_extension_energy = _.sum(_.map(extensions, function(extension) {
+      return extension.energy;
+   }));
 
    var targets = [];
    for (var index in spawns) {
@@ -64,25 +63,31 @@ function get_withdraw_targets(room) {
    var spawns = get_spawns_with_energy(room);
    var extensions = get_extensions_with_energy(room);
 
-   var extension_energy = _.map(
-         extensions,
-         function(extension) { return extension.energy; });
-   var total_extension_energy = _.sum(extension_energy);
+   var total_extension_energy = _.sum(_.map(extensions, function(extension) {
+      return extension.energy;
+   }));
 
    var targets = [];
-
-   targets.concat(spawns);
-
-   var surplus_minimum = _.min(_.map(
-            targets,
-            function(target) { return target.surplus; },
-            Number.MAX_SAFE_INTEGER));
-
-   for (var index in extensions) {
-      var extension = extensions[index];
-      var surplus = Math.min(extension.energy, surplus_minimum);
-      targets.push({target: extension, surplus: surplus});
+   for (var index in spawns) {
+      var spawn = spawns[index];
+      var surplus = spawn.energy + total_extension_energy - WORKER_BODY_COST;
+      if (surplus > 0) {
+         targets.push({target: spawn, surplus: surplus});
+      }
    }
+
+   if (targets.length == 0) {
+      return [];
+   }
+
+   var surplus_minimum = _.min(_.map(targets, function(target) {
+      return target.surplus;
+   }));
+
+   targets.concat(_.map(extensions, function(extension) {
+      var surplus = Math.min(extension.energy, surplus_minimum);
+      return {target: extension, surplus: surplus};
+   });
 
    return targets;
 }
