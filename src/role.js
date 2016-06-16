@@ -8,7 +8,7 @@ module.exports = function() {
    var role_definitions = [
       {
          name: ROLE_BUILDER,
-         quota: 2,
+         quota: 1,
          body_components: {
             WORK: 2,
             CARRY: 2,
@@ -26,7 +26,7 @@ module.exports = function() {
       },
       {
          name: ROLE_UPGRADER,
-         quota: 2,
+         quota: 1,
          body_components: {
             WORK: 2,
             CARRY: 2,
