@@ -87,7 +87,7 @@ function get_withdraw_targets(room) {
    targets.concat(_.map(extensions, function(extension) {
       var surplus = Math.min(extension.energy, surplus_minimum);
       return {target: extension, surplus: surplus};
-   });
+   }));
 
    return targets;
 }

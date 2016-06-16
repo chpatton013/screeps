@@ -2,7 +2,7 @@
 
 var Role = require('role');
 
-module.exports.loop = function () {
+module.exports.loop = function() {
    var body_component_name_to_value = {
       MOVE: MOVE,
       WORK: WORK,
@@ -55,4 +55,4 @@ module.exports.loop = function () {
          console.log('Creep ' + creep.name + ' has invalid role ' + creep.memory.role);
       }
    }
-}
+};
