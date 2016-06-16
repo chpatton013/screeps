@@ -191,6 +191,48 @@ function get_deposit_targets(room) {
    ], function(subset) { return subset.length > 0; });
 }
 
+function get_friendly_targets(room) {
+   var filter = function(target) {
+      return target.hits < target.hitsMax;
+   };
+
+   var spawn_targets = room.find(FIND_MY_SPAWNS, {filter: filter});
+   var creep_targets = room.find(FIND_MY_CREEPS, {filter: filter});
+   var structure_targets = room.find(FIND_MY_STRUCTURES, {
+      filter: function(structure) {
+         return structure.structureType != STRUCTURE_SPAWN && filter(structure);
+      },
+   });
+   var construction_targets = room.find(FIND_MY_CONSTRUCTION_SITES, {
+      filter: filter,
+   });
+
+   return _.filter([
+      spawn_targets,
+      creep_targets,
+      structure_targets,
+      construction_targets,
+   ], function(subset) { return subset.length > 0; });
+}
+
+function get_hostile_targets(room) {
+   var spawn_targets = room.find(FIND_HOSTILE_SPAWNS);
+   var creep_targets = room.find(FIND_HOSTILE_CREEPS);
+   var structure_targets = room.find(FIND_HOSTILE_STRUCTURES, {
+      filter: function(structure) {
+         return structure.structureType != STRUCTURE_SPAWN;
+      },
+   });
+   var construction_targets = room.find(FIND_HOSTILE_CONSTRUCTION_SITES);
+
+   return _.filter([
+      spawn_targets,
+      creep_targets,
+      structure_targets,
+      construction_targets,
+   ], function(subset) { return subset.length > 0; });
+}
+
 module.exports = {
    sort_by_distance: sort_by_distance,
 
@@ -209,4 +251,6 @@ module.exports = {
 
    get_withdraw_targets: get_withdraw_targets,
    get_deposit_targets: get_deposit_targets,
+   get_friendly_targets: get_friendly_targets,
+   get_hostile_targets: get_hostile_targets,
 };
