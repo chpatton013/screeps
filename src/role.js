@@ -51,5 +51,18 @@ module.exports = function() {
          UPGRADER: ROLE_UPGRADER,
       },
       roles: roles,
+      run: function() {
+         // Tell all the creeps what to do.
+         for (var name in Game.creeps) {
+            var creep = Game.creeps[name];
+            var role = roles[creep.memory.role];
+            if (role) {
+               role.run(creep);
+            } else {
+               console.log('Creep ' + creep.name + ' has invalid role ' +
+                     creep.memory.role);
+            }
+         }
+      },
    };
 }();
