@@ -1,5 +1,7 @@
 'use strict';
 
+var utilities = require('utilities');
+
 module.exports = function(name, required_body_components) {
    var deposit_structure_types = [
       STRUCTURE_EXTENSION,
@@ -27,8 +29,9 @@ module.exports = function(name, required_body_components) {
       run: function(creep) {
          var deposit_targets = get_deposit_targets(creep.room);
          if (deposit_targets.length > 0) {
-            // TODO: Prioritize targets by contention.
-            var target = deposit_targets[0];
+            var target = utilities.sort_by_distance(
+                  deposit_targets,
+                  creep.pos)[0];
             var deposit_result = creep.transfer(target, RESOURCE_ENERGY);
             if (deposit_result == ERR_NOT_IN_RANGE) {
                creep.moveTo(target);

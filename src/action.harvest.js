@@ -1,20 +1,24 @@
 'use strict';
 
+var utilities = require('utilities');
+
 module.exports = function(name, required_body_components) {
-   function get_sources(room) {
+   function get_source_targets(room) {
       return room.find(FIND_SOURCES);
    }
 
    return {
       name: name,
       required_body_components: required_body_components,
-      get_sources: get_sources,
+      get_source_targets: get_source_targets,
       run: function(creep) {
-         var sources = get_sources(creep.room);
-         // TODO: Prioritize sources by distance to creep.
-         var harvest_result = creep.harvest(sources[0]);
+         var source_targets = get_source_targets(creep.room);
+         var target = utilities.sort_by_distance(
+               source_targets,
+               creep.pos)[0];
+         var harvest_result = creep.harvest(target);
          if (harvest_result == ERR_NOT_IN_RANGE) {
-            creep.moveTo(sources[0]);
+            creep.moveTo(target);
          } else if (harvest_result != OK) {
             console.log('Failed to harvest:', harvest_result);
             return false;

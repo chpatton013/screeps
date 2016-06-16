@@ -1,5 +1,7 @@
 'use strict';
 
+var utilities = require('utilities');
+
 module.exports = function(name, required_body_components) {
    var renew_structure_types = [
       STRUCTURE_SPAWN,
@@ -12,11 +14,13 @@ module.exports = function(name, required_body_components) {
          var renew_targets =
             utilities.get_spawns_with_surplus_energy(creep.room);
          if (renew_targets.length > 0) {
-            // TODO: Prioritize targets by contention and distance to creep.
-            var target = renew_targets[0];
-            var renew_result = target.renewCreep(creep);
+            var renew = utilities.sort_by_distance(
+                  renew_targets,
+                  creep.pos,
+                  function(renew) { return renew.target; })[0];
+            var renew_result = renew.target.renewCreep(creep);
             if (renew_result == ERR_NOT_IN_RANGE) {
-               creep.moveTo(target);
+               creep.moveTo(renew.target);
             } else if (renew_result != OK) {
                console.log('Failed to renew:', renew_result);
                return false;

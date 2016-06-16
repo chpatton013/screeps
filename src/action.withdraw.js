@@ -14,8 +14,10 @@ module.exports = function(name, required_body_components) {
       run: function(creep) {
          var withdraw_targets = utilities.get_withdraw_targets(creep.room);
          if (withdraw_targets.length > 0) {
-            // TODO: Prioritize targets by distance to creep.
-            var withdraw = withdraw_targets[0];
+            var withdraw = utilities.sort_by_distance(
+                  withdraw_targets,
+                  creep.pos,
+                  function(withdraw) { return withdraw.target; })[0];
             var creep_energy_deficit = creep.carryCapacity - creep.carry.energy;
             var transfer_amount =
                Math.min(creep_energy_deficit, withdraw.surplus);

@@ -1,5 +1,7 @@
 'use strict';
 
+var utilities = require('utilities');
+
 module.exports = function(name, required_body_components) {
    if (!Memory.repairs) {
       Memory.repairs = {};
@@ -44,8 +46,9 @@ module.exports = function(name, required_body_components) {
       run: function(creep) {
          var repair_targets = get_repair_targets(creep.room);
          if (repair_targets.length) {
-            // TODO: Prioritize targets by distance to creep.
-            var target = repair_targets[0];
+            var target = utilities.sort_by_distance(
+                  repair_targets,
+                  creep.pos)[0];
             var repair_result = creep.repair(target);
             if (repair_result == OK) {
                Memory.repairs[target.id] = target.hits;

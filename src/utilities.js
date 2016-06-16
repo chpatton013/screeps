@@ -1,5 +1,25 @@
 'use strict';
 
+function sort_by_distance(targets, position, get_target) {
+   if (!get_target) {
+      get_target = function(x) { return x; };
+   }
+
+   var square_distances = {};
+   for (var index in targets) {
+      var target = get_target(targets[index]);
+      var dx = position.x - target.pos.x;
+      var dy = position.y - target.pos.y;
+      square_distances[target.id] = dx * dx + dy * dy;
+   }
+
+   var sorted_targets = targets.slice(0);
+   sorted_targets.sort(function(a, b) {
+      return square_distances[a.id] - square_distances[b.id];
+   });
+   return sorted_targets;
+}
+
 function get_spawns_with_energy(room) {
    return room.find(FIND_STRUCTURES, {
       filter: function(structure) {
@@ -25,10 +45,7 @@ function get_spawns_with_surplus_energy(room) {
    var extension_energy = _.map(
          extensions,
          function(extension) { return extension.energy; });
-   var total_extension_energy = _.reduce(
-         extension_energy,
-         function(accumulator, value) { return accumulator + value; },
-         0);
+   var total_extension_energy = _.sum(extension_energy);
 
    var WORKER_BODY_COST = 400;
 
@@ -50,10 +67,7 @@ function get_withdraw_targets(room) {
    var extension_energy = _.map(
          extensions,
          function(extension) { return extension.energy; });
-   var total_extension_energy = _.reduce(
-         extension_energy,
-         function(accumulator, value) { return accumulator + value; },
-         0);
+   var total_extension_energy = _.sum(extension_energy);
 
    var targets = [];
 
@@ -74,6 +88,7 @@ function get_withdraw_targets(room) {
 }
 
 module.exports = {
+   sort_by_distance: sort_by_distance,
    get_spawns_with_energy: get_spawns_with_energy,
    get_extensions_with_energy: get_extensions_with_energy,
    get_spawns_with_surplus_energy: get_spawns_with_surplus_energy,
