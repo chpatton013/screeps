@@ -22,6 +22,65 @@ function sort_by_distance(targets, position, get_target) {
    return sorted_targets;
 }
 
+function get_spawns_missing_energy(room) {
+   return room.find(FIND_STRUCTURES, {
+      filter: function(structure) {
+         return structure.structureType == STRUCTURE_SPAWN &&
+            structure.energy < structure.energyCapacity;
+      },
+   });
+}
+
+function get_extensions_missing_energy(room) {
+   return room.find(FIND_STRUCTURES, {
+      filter: function(structure) {
+         return structure.structureType == STRUCTURE_EXTENSION &&
+            structure.energy < structure.energyCapacity;
+      },
+   });
+}
+
+function get_towers_missing_energy(room) {
+   return room.find(FIND_STRUCTURES, {
+      filter: function(structure) {
+         return structure.structureType == STRUCTURE_TOWER &&
+            structure.energy < structure.energyCapacity;
+      },
+   });
+}
+
+function get_containers_missing_energy(room) {
+   return room.find(FIND_STRUCTURES, {
+      filter: function(structure) {
+         return structure.structureType == STRUCTURE_CONTAINER &&
+            structure.energy < structure.energyCapacity;
+      },
+   });
+}
+
+function get_storage_missing_energy(room) {
+   return room.find(FIND_STRUCTURES, {
+      filter: function(structure) {
+         return structure.structureType == STRUCTURE_STORAGE &&
+            structure.energy < structure.energyCapacity;
+      },
+   });
+}
+
+function get_deposit_targets(room) {
+   function annotate_with_deficit(target) {
+      return {target: target, deficit: target.energyCapacity - target.energy};
+   }
+
+   return _.filter([
+      _.map(get_spawns_missing_energy(room), annotate_with_deficit),
+      _.map(get_extensions_missing_energy(room), annotate_with_deficit),
+      _.map(get_towers_missing_energy(room), annotate_with_deficit),
+      _.map(get_containers_missing_energy(room), annotate_with_deficit),
+      _.map(get_storage_missing_energy(room), annotate_with_deficit),
+   ], function(subset) { return subset.ength > 0; });
+}
+
 function get_spawns_with_energy(room) {
    return room.find(FIND_STRUCTURES, {
       filter: function(structure) {
@@ -98,4 +157,10 @@ module.exports = {
    get_extensions_with_energy: get_extensions_with_energy,
    get_spawns_with_surplus_energy: get_spawns_with_surplus_energy,
    get_withdraw_targets: get_withdraw_targets,
+   get_spawns_missing_energy: get_spawns_missing_energy,
+   get_extensions_missing_energy: get_extensions_missing_energy,
+   get_towers_missing_energy: get_towers_missing_energy,
+   get_containers_missing_energy: get_containers_missing_energy,
+   get_storage_missing_energy: get_storage_missing_energy,
+   get_deposit_targets: get_deposit_targets,
 };

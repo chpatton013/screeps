@@ -7,6 +7,7 @@ module.exports = function(name, required_body_components) {
       STRUCTURE_EXTENSION,
       STRUCTURE_SPAWN,
       STRUCTURE_TOWER,
+      STRUCTURE_STORAGE,
    ];
 
    function get_deposit_targets(room) {
@@ -25,12 +26,12 @@ module.exports = function(name, required_body_components) {
       name: name,
       required_body_components: required_body_components,
       deposit_structure_types: deposit_structure_types,
-      get_deposit_targets: get_deposit_targets,
+      get_deposit_targets: utilities.get_deposit_targets,
       run: function(creep) {
-         var deposit_targets = get_deposit_targets(creep.room);
+         var deposit_targets = utilities.get_deposit_targets(creep.room);
          if (deposit_targets.length > 0) {
             var target = utilities.sort_by_distance(
-                  deposit_targets,
+                  deposit_targets[0],
                   creep.pos)[0];
             var deposit_result = creep.transfer(target, RESOURCE_ENERGY);
             if (deposit_result == ERR_NOT_IN_RANGE) {
