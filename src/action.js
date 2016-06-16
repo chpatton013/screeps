@@ -6,6 +6,7 @@ module.exports = function() {
    var ACTION_HARVEST = 'harvest';
    var ACTION_IDLE = 'idle';
    var ACTION_PICKUP = 'pickup';
+   var ACTION_RENEW = 'renew';
    var ACTION_REPAIR = 'repair';
    var ACTION_UPGRADE = 'upgrade';
    var ACTION_WITHDRAW = 'withdraw';
@@ -30,6 +31,10 @@ module.exports = function() {
       {
          name: ACTION_PICKUP,
          required_body_components: [WORK, CARRY, MOVE],
+      },
+      {
+         name: ACTION_RENEW,
+         required_body_components: [MOVE],
       },
       {
          name: ACTION_REPAIR,
@@ -60,6 +65,7 @@ module.exports = function() {
          HARVEST: ACTION_HARVEST,
          IDLE: ACTION_IDLE,
          PICKUP: ACTION_PICKUP,
+         RENEW: ACTION_RENEW,
          REPAIR: ACTION_REPAIR,
          UPGRADE: ACTION_UPGRADE,
          WITHDRAW: ACTION_WITHDRAW,
