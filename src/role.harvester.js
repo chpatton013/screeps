@@ -16,13 +16,15 @@ module.exports = function(name, quota, body_components) {
          // Harvester state transitions:
          // ENTER -> Renew -> Harvest -> Deposit -> Idle
 
-         var RENEW_THRESHOLD = 200;
          var MAX_TICKS_TO_LIVE = 1500;
+         var MIN_RENEW_THRESHOLD = MAX_TICKS_TO_LIVE * 0.25;
+         var MAX_RENEW_THRESHOLD = MAX_TICKS_TO_LIVE * 0.75;
 
-         if (creep.memory.renewing && creep.ticksToLive == MAX_TICKS_TO_LIVE) {
+         if (creep.memory.renewing &&
+               creep.ticksToLive > MAX_RENEW_THRESHOLD) {
             creep.memory.renewing = false;
          } else if (!creep.memory.renewing &&
-               creep.ticksToLive < RENEW_THRESHOLD) {
+               creep.ticksToLive < MIN_RENEW_THRESHOLD) {
             creep.memory.renewing = true;
          }
          if (creep.memory.renewing &&
