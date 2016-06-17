@@ -14,7 +14,7 @@ module.exports = function(name, quota, body_components) {
          }
 
          // Upgrader state transitions:
-         // ENTER -> Renew -> Upgrade -> Withdraw -> Idle
+         // ENTER -> Renew -> Upgrade -> Pickup -> Withdraw -> Idle
 
          var MAX_TICKS_TO_LIVE = 1500;
          var MIN_RENEW_THRESHOLD = MAX_TICKS_TO_LIVE * 0.25;
@@ -40,6 +40,17 @@ module.exports = function(name, quota, body_components) {
          }
          if (creep.memory.upgrading &&
                Action.actions[Action.constants.UPGRADE].run(creep)) {
+            return;
+         }
+
+         if (creep.memory.pickingup &&
+               creep.carry.energy == creep.carryCapacity) {
+            creep.memory.pickingup = false;
+         } else if (!creep.memory.pickingup && creep.carry.energy == 0) {
+            creep.memory.pickingup = true;
+         }
+         if (creep.memory.pickingup &&
+               Action.actions[Action.constants.PICKUP].run(creep)) {
             return;
          }
 
