@@ -26,7 +26,7 @@ module.exports = function() {
       },
       {
          name: ROLE_UPGRADER,
-         quota: 1,
+         quota: 4,
          body_components: {
             WORK: 2,
             CARRY: 2,
