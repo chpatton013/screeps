@@ -60,13 +60,13 @@ module.exports = function() {
                         var amount = role.body_components[component_name];
                         var component =
                            body_component_name_to_value[component_name];
-                        body.concat(new Array(amount).fill(component));
+                        body = body.concat(new Array(amount).fill(component));
                      }
                      if (spawn.canCreateCreep(body) == OK) {
                         if (spawn.createCreep(
                                  body,
                                  undefined,
-                                 {role: name}) == OK) {
+                                 {role: role_name}) == OK) {
                            var creep = Game.creeps[spawn.spawning];
                            index_entry.push(creep);
                            spawned.push(creep);
