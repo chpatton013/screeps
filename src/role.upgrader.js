@@ -8,6 +8,11 @@ module.exports = function(name, quota, body_components) {
       quota: quota,
       body_components: body_components,
       run: function(creep) {
+         if (creep.ticksToLive == 1 &&
+               Action.actions[Action.constants.DROP].run(creep)) {
+            return;
+         }
+
          // Upgrader state transitions:
          // ENTER -> Renew -> Upgrade -> Withdraw -> Idle
 

@@ -3,6 +3,7 @@
 module.exports = function() {
    var ACTION_BUILD = 'build';
    var ACTION_DEPOSIT = 'deposit';
+   var ACTION_DROP = 'drop';
    var ACTION_HARVEST = 'harvest';
    var ACTION_IDLE = 'idle';
    var ACTION_PICKUP = 'pickup';
@@ -19,6 +20,10 @@ module.exports = function() {
       {
          name: ACTION_DEPOSIT,
          required_body_components: [WORK, CARRY, MOVE],
+      },
+      {
+         name: ACTION_DROP,
+         required_body_components: [CARRY],
       },
       {
          name: ACTION_HARVEST,
@@ -62,6 +67,7 @@ module.exports = function() {
       constants: {
          BUILD: ACTION_BUILD,
          DEPOSIT: ACTION_DEPOSIT,
+         DROP: ACTION_DROP,
          HARVEST: ACTION_HARVEST,
          IDLE: ACTION_IDLE,
          PICKUP: ACTION_PICKUP,

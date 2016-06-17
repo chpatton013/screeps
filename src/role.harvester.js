@@ -8,6 +8,11 @@ module.exports = function(name, quota, body_components) {
       quota: quota,
       body_components: body_components,
       run: function(creep) {
+         if (creep.ticksToLive == 1 &&
+               Action.actions[Action.constants.DROP].run(creep)) {
+            return;
+         }
+
          // Harvester state transitions:
          // ENTER -> Renew -> Harvest -> Deposit -> Idle
 
