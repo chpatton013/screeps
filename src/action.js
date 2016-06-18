@@ -1,6 +1,7 @@
 'use strict';
 
 module.exports = function() {
+   var ACTION_ATTACK = 'attack';
    var ACTION_BUILD = 'build';
    var ACTION_DEPOSIT = 'deposit';
    var ACTION_DROP = 'drop';
@@ -13,6 +14,10 @@ module.exports = function() {
    var ACTION_WITHDRAW = 'withdraw';
 
    var action_definitions = [
+      {
+         name: ACTION_ATTACK,
+         required_body_components: [ATTACK, MOVE],
+      },
       {
          name: ACTION_BUILD,
          required_body_components: [WORK, CARRY, MOVE],
@@ -65,6 +70,7 @@ module.exports = function() {
 
    return {
       constants: {
+         ATTACK: ACTION_ATTACK,
          BUILD: ACTION_BUILD,
          DEPOSIT: ACTION_DEPOSIT,
          DROP: ACTION_DROP,

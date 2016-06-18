@@ -220,7 +220,8 @@ function get_hostile_targets(room) {
    var creep_targets = room.find(FIND_HOSTILE_CREEPS);
    var structure_targets = room.find(FIND_HOSTILE_STRUCTURES, {
       filter: function(structure) {
-         return structure.structureType != STRUCTURE_SPAWN;
+         return structure.structureType != STRUCTURE_SPAWN &&
+            structure.structureType != STRUCTURE_CONTROLLER;
       },
    });
    var construction_targets = room.find(FIND_HOSTILE_CONSTRUCTION_SITES);
