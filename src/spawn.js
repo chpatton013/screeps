@@ -31,7 +31,9 @@ module.exports = function() {
          var creep = Game.creeps[creep_name];
          var room_name = creep.room.name;
          var role_name = creep.memory.role;
-         creeps_by_room_and_role[room_name][role_name].push(creep);
+         if (creeps_by_room_and_role[room_name][role_name]) {
+            creeps_by_room_and_role[room_name][role_name].push(creep);
+         }
       }
 
       return creeps_by_room_and_role;
