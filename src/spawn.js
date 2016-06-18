@@ -66,7 +66,7 @@ module.exports = function() {
                         if (spawn.createCreep(
                                  body,
                                  undefined,
-                                 {role: role_name}) == OK) {
+                                 role.get_memory()) == OK) {
                            var creep = Game.creeps[spawn.spawning];
                            index_entry.push(creep);
                            spawned.push(creep);
