@@ -4,6 +4,7 @@ module.exports = function() {
    var ROLE_BUILDER = 'builder';
    var ROLE_HARVESTER = 'harvester';
    var ROLE_UPGRADER = 'upgrader';
+   var ROLE_CLAIMER = 'claimer';
    var ROLE_MELEE_SOLDIER = 'melee_soldier';
 
    var role_definitions = [
@@ -35,6 +36,14 @@ module.exports = function() {
          },
       },
       {
+         name: ROLE_CLAIMER,
+         quota: 0,
+         body_components: {
+            MOVE: 1,
+            CLAIM: 1,
+         },
+      },
+      {
          name: ROLE_MELEE_SOLDIER,
          quota: 0,
          body_components: {
@@ -58,6 +67,7 @@ module.exports = function() {
          BUILDER: ROLE_BUILDER,
          HARVESTER: ROLE_HARVESTER,
          UPGRADER: ROLE_UPGRADER,
+         CLAIMER: ROLE_CLAIMER,
          MELEE_SOLDIER: ROLE_MELEE_SOLDIER,
       },
       roles: roles,
