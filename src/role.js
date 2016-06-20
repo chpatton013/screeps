@@ -4,6 +4,7 @@ module.exports = function() {
    var ROLE_BUILDER = 'builder';
    var ROLE_HARVESTER = 'harvester';
    var ROLE_UPGRADER = 'upgrader';
+   var ROLE_RECYCLER = 'recycler';
    var ROLE_CLAIMER = 'claimer';
    var ROLE_MELEE_SOLDIER = 'melee_soldier';
 
@@ -12,27 +13,34 @@ module.exports = function() {
          name: ROLE_BUILDER,
          quota: 1,
          body_components: {
-            WORK: 3,
-            CARRY: 3,
-            MOVE: 3,
+            WORK: 2,
+            CARRY: 2,
+            MOVE: 2,
          },
       },
       {
          name: ROLE_HARVESTER,
          quota: 4,
          body_components: {
-            WORK: 3,
-            CARRY: 3,
-            MOVE: 3,
+            WORK: 2,
+            CARRY: 2,
+            MOVE: 2,
          },
       },
       {
          name: ROLE_UPGRADER,
-         quota: 4,
+         quota: 2,
          body_components: {
-            WORK: 3,
-            CARRY: 3,
-            MOVE: 3,
+            WORK: 2,
+            CARRY: 2,
+            MOVE: 2,
+         },
+      },
+      {
+         name: ROLE_RECYCLER,
+         quota: 0,
+         body_components: {
+            MOVE: 1,
          },
       },
       {
@@ -67,6 +75,7 @@ module.exports = function() {
          BUILDER: ROLE_BUILDER,
          HARVESTER: ROLE_HARVESTER,
          UPGRADER: ROLE_UPGRADER,
+         RECYCLER: ROLE_RECYCLER,
          CLAIMER: ROLE_CLAIMER,
          MELEE_SOLDIER: ROLE_MELEE_SOLDIER,
       },
