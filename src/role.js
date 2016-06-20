@@ -84,6 +84,10 @@ module.exports = function() {
          // Tell all the creeps what to do.
          for (var name in Game.creeps) {
             var creep = Game.creeps[name];
+            if (creep.spawning) {
+               continue;
+            }
+
             var role = roles[creep.memory.role];
             if (role) {
                role.run(creep);
