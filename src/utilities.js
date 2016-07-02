@@ -117,7 +117,7 @@ function get_containers_missing_energy(room) {
    return room.find(FIND_STRUCTURES, {
       filter: function(structure) {
          return structure.structureType == STRUCTURE_CONTAINER &&
-            structure.energy < structure.energyCapacity;
+            structure.store < structure.storeCapacity;
       },
    });
 }
@@ -126,7 +126,7 @@ function get_storage_missing_energy(room) {
    return room.find(FIND_STRUCTURES, {
       filter: function(structure) {
          return structure.structureType == STRUCTURE_STORAGE &&
-            structure.energy < structure.energyCapacity;
+            structure.store < structure.storeCapacity;
       },
    });
 }
@@ -156,38 +156,41 @@ function get_withdraw_targets(room) {
       return {target: extension, surplus: surplus};
    });
 
-   var storage_targets = [].concat(
-      get_containers_with_energy(room),
-      get_storage_with_energy(room));
-
-   function annotate_with_surplus(target) {
-      return {target: target, surplus: target.energy};
-   }
+   var container_targets = get_containers_with_energy(room);
+   var storage_targets = get_storage_with_energy(room);
 
    return _.filter([
       storage_targets,
+      container_targets,
       extension_targets,
-      _.map(spawn_targets, annotate_with_surplus),
+      spawn_targets,
    ], function(subset) { return subset.length > 0; });
 }
 
 function get_deposit_targets(room) {
    function annotate_with_deficit(target) {
-      return {target: target, deficit: target.energyCapacity - target.energy};
+      var deficit;
+      if (target.structureType == STRUCTURE_CONTAINER ||
+          target.structureType == STRUCTURE_STORAGE) {
+         deficit = target.storeCapacity - target.store;
+      } else {
+         deficit = target.energyCapacity - target.energy;
+      }
+      return {target: target, deficit: deficit};
    }
 
    var spawn_targets = get_spawns_missing_energy(room);
    var extension_targets = get_extensions_missing_energy(room);
    var tower_targets = get_towers_missing_energy(room);
-   var storage_targets = [].concat(
-      get_containers_missing_energy(room),
-      get_storage_missing_energy(room));
+   var storage_targets = get_storage_missing_energy(room);
+   var container_targets = get_containers_missing_energy(room);
 
    return _.filter([
       _.map(spawn_targets, annotate_with_deficit),
       _.map(extension_targets, annotate_with_deficit),
       _.map(tower_targets, annotate_with_deficit),
       _.map(storage_targets, annotate_with_deficit),
+      _.map(container_targets, annotate_with_deficit),
    ], function(subset) { return subset.length > 0; });
 }
 
