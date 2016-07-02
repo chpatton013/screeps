@@ -18,21 +18,30 @@ function hostile(tower) {
 }
 
 function friendly(tower) {
-   var targets = utilities.get_friendly_targets(tower.room);
+   if (tower.energy < tower.energyCapacity * TOWER_RESERVE_RATIO) {
+      return false;
+   }
+
+   var targets = _.filter(
+         utilities.get_friendly_targets(tower.room),
+         function(target) { return !target.structureType; });
 
    if (targets.length > 0) {
-      var target = utilities.sort_by_hits(targets[0])[0];
-      if (target.structureType) {
-         if ((tower.energy > tower.energyCapacity * TOWER_RESERVE_RATIO) &&
-               tower.repair(target) == OK) {
-            return true;
-         }
-      } else {
-         if (tower.heal(target) == OK) {
-            return true;
-         }
+      var target = targets[0];
+      if (tower.heal(target) == OK) {
+         return true;
       }
    }
+
+   targets = utilities.get_repair_targets(tower.room);
+   if (targets.length > 0) {
+      var target = targets[0];
+      if (tower.repair(target) == OK) {
+         Memory.repairs[target.id] = target.hits;
+         return true;
+      }
+   }
+
    return false;
 }
 
@@ -44,7 +53,7 @@ module.exports = function() {
             var towers = room.find(FIND_STRUCTURES, {
                filter: function(structure) {
                   return structure.structureType == STRUCTURE_TOWER &&
-                     (true || structure.energy >= TOWER_ACTION_COST);
+                     (structure.energy >= TOWER_ACTION_COST);
                },
             });
 

@@ -292,6 +292,7 @@ function get_hostile_targets(room) {
 
 module.exports = {
    sort_by_distance: sort_by_distance,
+   sort_by_hits: sort_by_hits,
 
    get_spawns_with_energy: get_spawns_with_energy,
    get_extensions_with_energy: get_extensions_with_energy,
