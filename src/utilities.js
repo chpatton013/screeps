@@ -22,6 +22,18 @@ function sort_by_distance(targets, position, get_target) {
    return sorted_targets;
 }
 
+function sort_by_hits(targets, get_target) {
+   if (!get_target) {
+      get_target = function(x) { return x; };
+   }
+
+   var sorted_targets = targets.slice(0);
+   sorted_targets.sort(function(a, b) {
+      return a.hits < b.hits;
+   });
+   return sorted_targets;
+}
+
 function get_spawns_with_energy(room) {
    return room.find(FIND_STRUCTURES, {
       filter: function(structure) {
@@ -194,6 +206,47 @@ function get_deposit_targets(room) {
    ], function(subset) { return subset.length > 0; });
 }
 
+function get_repair_targets(room) {
+   if (!Memory.repairs) {
+      Memory.repairs = {};
+   }
+
+   var REPAIR_HITS_RATIO_HYSTERESIS_LOW = 0.5;
+   var REPAIR_HITS_RATIO_HYSTERESIS_HIGH = 0.75;
+
+   var WALL_REPAIR_HITS_HYSTERESIS_LOW = 10 * 1000;
+   var WALL_REPAIR_HITS_HYSTERESIS_HIGH = 100 * 1000;
+
+   return room.find(FIND_STRUCTURES, {
+      filter: function(structure) {
+         if (structure.structureType == STRUCTURE_WALL) {
+            if (structure.hits < WALL_REPAIR_HITS_HYSTERESIS_LOW) {
+               return true;
+            }
+
+            if (structure.hits > WALL_REPAIR_HITS_HYSTERESIS_HIGH) {
+               return false;
+            }
+         } else {
+            var hysteresis_low_value =
+               structure.hitsMax * REPAIR_HITS_RATIO_HYSTERESIS_LOW;
+            if (structure.hits < hysteresis_low_value) {
+               return true;
+            }
+
+            var hysteresis_high_value =
+               structure.hitsMax * REPAIR_HITS_RATIO_HYSTERESIS_HIGH;
+            if (structure.hits > hysteresis_high_value) {
+               return false;
+            }
+         }
+
+         var repair_start = Memory.repairs[structure.id];
+         return repair_start && (repair_start < structure.hits);
+      },
+   });
+}
+
 function get_friendly_targets(room) {
    var filter = function(target) {
       return target.hits < target.hitsMax;
@@ -255,6 +308,7 @@ module.exports = {
 
    get_withdraw_targets: get_withdraw_targets,
    get_deposit_targets: get_deposit_targets,
+   get_repair_targets: get_repair_targets,
    get_friendly_targets: get_friendly_targets,
    get_hostile_targets: get_hostile_targets,
 };

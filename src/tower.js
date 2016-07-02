@@ -21,7 +21,7 @@ function friendly(tower) {
    var targets = utilities.get_friendly_targets(tower.room);
 
    if (targets.length > 0) {
-      var target = utilities.sort_by_distance(targets[0], tower)[0];
+      var target = utilities.sort_by_hits(targets[0])[0];
       if (target.structureType) {
          if ((tower.energy > tower.energyCapacity * TOWER_RESERVE_RATIO) &&
                tower.repair(target) == OK) {
