@@ -8,6 +8,15 @@ module.exports = function() {
    var ROLE_CLAIMER = 'claimer';
    var ROLE_MELEE_SOLDIER = 'melee_soldier';
 
+   var priority_order = [
+      ROLE_HARVESTER,
+      ROLE_BUILDER,
+      ROLE_UPGRADER,
+      ROLE_RECYCLER,
+      ROLE_CLAIMER,
+      ROLE_MELEE_SOLDIER,
+   ];
+
    var role_definitions = [
       {
          name: ROLE_BUILDER,
@@ -80,6 +89,7 @@ module.exports = function() {
          MELEE_SOLDIER: ROLE_MELEE_SOLDIER,
       },
       roles: roles,
+      priority_order: priority_order,
       run: function() {
          // Tell all the creeps what to do.
          for (var name in Game.creeps) {

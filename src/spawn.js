@@ -51,7 +51,8 @@ module.exports = function() {
             var spawn = Game.spawns[spawn_name];
             var room = spawn.room;
             if (!spawn.spawning) {
-               for (var role_name in Role.roles) {
+               for (var index in Role.priority_order) {
+                  var role_name = Role.priority_order[index];
                   var role = Role.roles[role_name];
                   var quota = role.quota;
                   var index_entry =
