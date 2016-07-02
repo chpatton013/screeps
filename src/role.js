@@ -23,8 +23,8 @@ module.exports = function() {
          quota: 1,
          body_components: {
             WORK: 2,
-            CARRY: 2,
-            MOVE: 2,
+            CARRY: 1,
+            MOVE: 1,
          },
       },
       {
@@ -38,11 +38,11 @@ module.exports = function() {
       },
       {
          name: ROLE_UPGRADER,
-         quota: 2,
+         quota: 1,
          body_components: {
             WORK: 2,
-            CARRY: 2,
-            MOVE: 2,
+            CARRY: 1,
+            MOVE: 1,
          },
       },
       {
