@@ -3,6 +3,7 @@
 var utilities = require('utilities');
 
 var TOWER_ACTION_COST = 10;
+var TOWER_RESERVE_RATIO = 0.5;
 
 function hostile(tower) {
    var targets = utilities.get_hostile_targets(tower.room);
@@ -22,7 +23,8 @@ function friendly(tower) {
    if (targets.length > 0) {
       var target = utilities.sort_by_distance(targets[0], tower)[0];
       if (target.structureType) {
-         if (tower.repair(target) == OK) {
+         if ((tower.energy > tower.energyCapacity * TOWER_RESERVE_RATIO) &&
+               tower.repair(target) == OK) {
             return true;
          }
       } else {
