@@ -23,7 +23,11 @@ module.exports = function(name, required_body_components) {
                   deposit_targets[0],
                   creep.pos,
                   function(deposit) { return deposit.target; })[0];
-            var deposit_result = creep.transfer(deposit.target, RESOURCE_ENERGY);
+            var amount = Math.min(creep.carry.energy, deposit.deficit);
+            var deposit_result = creep.transfer(
+                  deposit.target,
+                  RESOURCE_ENERGY,
+                  amount);
             if (deposit_result == ERR_NOT_IN_RANGE) {
                creep.moveTo(deposit.target);
             } else if (deposit_result != OK) {
