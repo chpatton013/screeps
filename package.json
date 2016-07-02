@@ -9,8 +9,7 @@
   },
   "dependencies": {
     "grunt": "1.0.1",
-    "grunt-screeps": "1.2.1",
-    "syntax-checker": "0.0.2"
+    "grunt-screeps": "1.2.1"
   },
   "license": "MIT"
 }
