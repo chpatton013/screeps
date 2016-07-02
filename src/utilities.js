@@ -217,32 +217,89 @@ function get_repair_targets(room) {
    var WALL_REPAIR_HITS_HYSTERESIS_LOW = 10 * 1000;
    var WALL_REPAIR_HITS_HYSTERESIS_HIGH = 100 * 1000;
 
+   var hysteresis_hits = {
+      STRUCTURE_WALL: {
+         low: WALL_REPAIR_HITS_HYSTERESIS_LOW,
+         high: WALL_REPAIR_HITS_HYSTERESIS_HIGH,
+      },
+   };
+
+   var HYSTERESIS_LOW = "low";
+   var HYSTERESIS_HIGH = "high";
+   var HYSTERESIS_TRANSITIONING = "transitioning";
+
+   function get_hysteresis_hits_state(structure) {
+      var hysteresis = hysteresis_hits[structure.structureType];
+      if (!hysteresis) {
+         return HYSTERESIS_TRANSITIONING;
+      }
+
+      if (structure.hits < hysteresis.low) {
+         return HYSTERESIS_LOW;
+      }
+
+      if (structure.hits > hysteresis.high) {
+         return HYSTERESIS_HIGH;
+      }
+
+      return HYSTERESIS_TRANSITIONING;
+   }
+
+   function get_hysteresis_ratio_state(structure) {
+      var hysteresis_low_value =
+         structure.hitsMax * REPAIR_HITS_RATIO_HYSTERESIS_LOW;
+      if (structure.hits < hysteresis_low_value) {
+         return HYSTERESIS_LOW;
+      }
+
+      var hysteresis_high_value =
+         structure.hitsMax * REPAIR_HITS_RATIO_HYSTERESIS_HIGH;
+      if (structure.hits > hysteresis_high_value) {
+         return HYSTERESIS_HIGH;
+      }
+
+      return HYSTERESIS_TRANSITIONING;
+   }
+
+   function get_hysteresis_state(structure) {
+      if (structure.structureType == STRUCTURE_WALL) {
+         return get_hysteresis_hits_state(structure);
+      } else {
+         return get_hysteresis_ratio_state(structure);
+      }
+   }
+
+   function filter(structure) {
+      var hysteresis_state = get_hysteresis_state(structure);
+      if (hysteresis_state == HYSTERESIS_LOW) {
+         return true;
+      } else if (hysteresis_state == HYSTERESIS_HIGH) {
+         return false;
+      }
+
+      var repair_start = Memory.repairs[structure.id];
+      return repair_start && (repair_start < structure.hits);
+   }
+
+   var low_priority_targets = [
+      STRUCTURE_WALL,
+      STRUCTURE_ROAD,
+   ];
+
+   var targets = room.find(FIND_STRUCTURES, {
+      filter: function(structure) {
+         return !_.contains(low_priority_targets, structure.structureType) &&
+                filter(structure);
+      },
+   });
+   if (targets.length > 0) {
+      return targets;
+   }
+
    return room.find(FIND_STRUCTURES, {
       filter: function(structure) {
-         if (structure.structureType == STRUCTURE_WALL) {
-            if (structure.hits < WALL_REPAIR_HITS_HYSTERESIS_LOW) {
-               return true;
-            }
-
-            if (structure.hits > WALL_REPAIR_HITS_HYSTERESIS_HIGH) {
-               return false;
-            }
-         } else {
-            var hysteresis_low_value =
-               structure.hitsMax * REPAIR_HITS_RATIO_HYSTERESIS_LOW;
-            if (structure.hits < hysteresis_low_value) {
-               return true;
-            }
-
-            var hysteresis_high_value =
-               structure.hitsMax * REPAIR_HITS_RATIO_HYSTERESIS_HIGH;
-            if (structure.hits > hysteresis_high_value) {
-               return false;
-            }
-         }
-
-         var repair_start = Memory.repairs[structure.id];
-         return repair_start && (repair_start < structure.hits);
+         return _.contains(low_priority_targets, structure.structureType) &&
+                filter(structure);
       },
    });
 }
