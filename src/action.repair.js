@@ -7,30 +7,35 @@ module.exports = function(name, required_body_components) {
       Memory.repairs = {};
    }
 
-   var ignore_structure_types = [
-      STRUCTURE_WALL,
-   ];
-
-   var REPAIR_HITS_RATIO_HYSTERESIS_LOW = 0.25;
+   var REPAIR_HITS_RATIO_HYSTERESIS_LOW = 0.5;
    var REPAIR_HITS_RATIO_HYSTERESIS_HIGH = 0.75;
+
+   var WALL_REPAIR_HITS_HYSTERESIS_LOW = 10 * 1000;
+   var WALL_REPAIR_HITS_HYSTERESIS_HIGH = 100 * 1000;
 
    function get_repair_targets(room) {
       return room.find(FIND_STRUCTURES, {
          filter: function(structure) {
-            if (_.contains(ignore_structure_types, structure.structureType)) {
-               return false;
-            }
+            if (structure.structureType == STRUCTURE_WALL) {
+               if (structure.hits < WALL_REPAIR_HITS_HYSTERESIS_LOW) {
+                  return true;
+               }
 
-            var hysteresis_low_value =
-               structure.hitsMax * REPAIR_HITS_RATIO_HYSTERESIS_LOW;
-            if (structure.hits < hysteresis_low_value) {
-               return true;
-            }
+               if (structure.hits > WALL_REPAIR_HITS_HYSTERESIS_HIGH) {
+                  return false;
+               }
+            } else {
+               var hysteresis_low_value =
+                  structure.hitsMax * REPAIR_HITS_RATIO_HYSTERESIS_LOW;
+               if (structure.hits < hysteresis_low_value) {
+                  return true;
+               }
 
-            var hysteresis_high_value =
-               structure.hitsMax * REPAIR_HITS_RATIO_HYSTERESIS_HIGH;
-            if (structure.hits > hysteresis_high_value) {
-               return false;
+               var hysteresis_high_value =
+                  structure.hitsMax * REPAIR_HITS_RATIO_HYSTERESIS_HIGH;
+               if (structure.hits > hysteresis_high_value) {
+                  return false;
+               }
             }
 
             var repair_start = Memory.repairs[structure.id];
