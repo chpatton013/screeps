@@ -50,8 +50,7 @@ module.exports = function(name, quota, body_components) {
 
          if (creep.memory.depositing && creep.carry.energy == 0) {
             creep.memory.depositing = false;
-         } else if (!creep.memory.depositing &&
-               creep.carry.energy == creep.carryCapacity) {
+         } else if (!creep.memory.depositing && creep.carry.energy > 0) {
             creep.memory.depositing = true;
          }
          if (creep.memory.depositing &&
