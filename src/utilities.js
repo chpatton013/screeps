@@ -65,7 +65,7 @@ function get_containers_with_energy(room) {
    return room.find(FIND_STRUCTURES, {
       filter: function(structure) {
          return structure.structureType == STRUCTURE_CONTAINER &&
-            structure.energy > 0;
+            structure.store.energy > 0;
       },
    });
 }
@@ -74,7 +74,7 @@ function get_storage_with_energy(room) {
    return room.find(FIND_STRUCTURES, {
       filter: function(structure) {
          return structure.structureType == STRUCTURE_STORAGE &&
-            structure.energy > 0;
+            structure.store.energy > 0;
       },
    });
 }
@@ -129,7 +129,7 @@ function get_containers_missing_energy(room) {
    return room.find(FIND_STRUCTURES, {
       filter: function(structure) {
          return structure.structureType == STRUCTURE_CONTAINER &&
-            structure.store < structure.storeCapacity;
+            _.sum(structure.store) < structure.storeCapacity;
       },
    });
 }
@@ -138,7 +138,7 @@ function get_storage_missing_energy(room) {
    return room.find(FIND_STRUCTURES, {
       filter: function(structure) {
          return structure.structureType == STRUCTURE_STORAGE &&
-            structure.store < structure.storeCapacity;
+            _.sum(structure.store) < structure.storeCapacity;
       },
    });
 }
@@ -171,9 +171,13 @@ function get_withdraw_targets(room) {
    var container_targets = get_containers_with_energy(room);
    var storage_targets = get_storage_with_energy(room);
 
+   function annotate_with_surplus(target) {
+      return {target: target, surplus: target.store.energy};
+   }
+
    return _.filter([
-      storage_targets,
-      container_targets,
+      _.map(storage_targets, annotate_with_surplus),
+      _.map(container_targets, annotate_with_surplus),
       extension_targets,
       spawn_targets,
    ], function(subset) { return subset.length > 0; });

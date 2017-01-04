@@ -26,8 +26,17 @@ module.exports = function(name, required_body_components) {
                return false;
             }
 
-            var withdraw_result =
-               withdraw.target.transferEnergy(creep, transfer_amount);
+            var withdraw_result;
+            if (withdraw.target.structureType == STRUCTURE_CONTAINER ||
+                  withdraw.target.structureType == STRUCTURE_STORAGE) {
+               withdraw_result =
+                     withdraw.target.transfer(creep,
+                                              RESOURCE_ENERGY,
+                                              transfer_amount);
+            } else {
+               withdraw_result =
+                     withdraw.target.transferEnergy(creep, transfer_amount);
+            }
             if (withdraw_result == ERR_NOT_IN_RANGE) {
                creep.moveTo(withdraw.target);
             } else if (withdraw_result != OK) {
