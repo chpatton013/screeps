@@ -20,7 +20,7 @@ module.exports = function() {
    var role_definitions = [
       {
          name: ROLE_BUILDER,
-         quota: 1,
+         quota: 2,
          body_components: {
             WORK: 1,
             CARRY: 1,
@@ -29,7 +29,7 @@ module.exports = function() {
       },
       {
          name: ROLE_HARVESTER,
-         quota: 4,
+         quota: 12,
          body_components: {
             WORK: 2,
             CARRY: 2,
@@ -38,11 +38,11 @@ module.exports = function() {
       },
       {
          name: ROLE_UPGRADER,
-         quota: 1,
+         quota: 4,
          body_components: {
-            WORK: 1,
-            CARRY: 1,
-            MOVE: 1,
+            WORK: 2,
+            CARRY: 2,
+            MOVE: 2,
          },
       },
       {
